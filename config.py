@@ -1,12 +1,21 @@
 import os
+from dotenv import load_dotenv
 
-# Bot tokenini @BotFather dan oling
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8682859580:AAE_Xuf30lK4mwDCXNWganbLfAuYKAKeReo")
+load_dotenv()  # lokalda ishlatilganda .env faylini o'qiydi (Railway'da bunga hojat yo'q)
 
-# Admin(lar) Telegram user ID lari (bir nechta bo'lishi mumkin)
-ADMIN_IDS = [
-    8350947035,  # <- shu yerga o'zingizning Telegram ID raqamingizni yozing
-]
+# Bot tokenini @BotFather dan oling. Token faqat .env faylida yoki
+# Railway "Variables" bo'limida saqlanishi kerak - kodga yozmang!
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+    raise RuntimeError(
+        "BOT_TOKEN topilmadi! .env faylga BOT_TOKEN=... qo'shing "
+        "yoki Railway Variables bo'limiga kiriting."
+    )
+
+# Admin(lar) Telegram user ID lari (vergul bilan ajratib bir nechtasini yozish mumkin)
+# .env da: ADMIN_IDS=8350947035,123456789
+_admin_ids_raw = os.getenv("ADMIN_IDS", "")
+ADMIN_IDS = [int(x.strip()) for x in _admin_ids_raw.split(",") if x.strip()]
 
 # Yangi foydalanuvchiga beriladigan boshlang'ich coinlar soni
 START_COINS = 3
@@ -32,5 +41,13 @@ DAILY_BONUS_COINS = 1
 # --- "Energy" tizimi: har necha soatda 1 coin avtomatik tiklanadi ---
 ENERGY_REGEN_HOURS = 4      # necha soatda 1 coin qo'shiladi
 ENERGY_REGEN_MAX = 5        # avtomatik tiklanish orqali coin shu chegaragacha to'ladi
+
+# --- Telegram Stars orqali sotib olinadigan coin paketlari: {stars: coin} ---
+STAR_PACKAGES = {
+    50: 10,
+    100: 22,
+    250: 60,
+    500: 130,
+}
 
 DB_PATH = "bot.db"
